@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Report | PhishGuard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="logo">PhishGuard</span>
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('add_report') }}" class="active">Report URL</a>
+            <span class="nav-user">Hi, {{ session['username'] }}</span>
+            <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+        </div>
+    </nav>
+
+    <main class="form-container">
+        <div class="form-card">
+            <h1>Report a Phishing URL</h1>
+            <p class="subtitle">Help the community by reporting suspicious URLs</p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('add_report') }}" novalidate>
+                <div class="form-group">
+                    <label for="url">Suspicious URL</label>
+                    <input type="url" id="url" name="url"
+                           placeholder="https://example-suspicious-site.com/login" required>
+                </div>
+                <div class="form-group">
+                    <label for="threat_level">Threat Level</label>
+                    <select id="threat_level" name="threat_level" required>
+                        {% for t in threat_levels %}
+                        <option value="{{ t }}">{{ t }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status" name="status" required>
+                        {% for s in statuses %}
+                        <option value="{{ s }}">{{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Notes (optional)</label>
+                    <textarea id="notes" name="notes" rows="4"
+                              placeholder="Describe why this URL looks suspicious..."
+                              maxlength="1000"></textarea>
+                </div>
+                <div class="form-actions">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-ghost">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Submit Report</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
